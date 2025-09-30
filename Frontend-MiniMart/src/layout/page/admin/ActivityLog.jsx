@@ -1,13 +1,29 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fetchActivityLogs } from "../../../api/activityLogs";
 
-const formatDateInput = (date) => {
-  if (!(date instanceof Date)) {
-    return "";
+const AUTO_REFRESH_INTERVAL_MS = 10000;
+
+const parseDateValue = (value) => {
+  if (!value) {
+    return null;
   }
-  const copy = new Date(date);
-  copy.setHours(0, 0, 0, 0);
-  return copy.toISOString().slice(0, 10);
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+  return parsed;
+};
+
+const formatDisplayDate = (value) => {
+  const parsed = parseDateValue(value);
+  if (!parsed) {
+    return null;
+  }
+  return parsed.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
 };
 
 const formatDateTime = (value) => {
@@ -29,34 +45,32 @@ const formatDateTime = (value) => {
 
 const formatNumber = (value) => Number(value ?? 0).toLocaleString();
 
-const getDefaultStartDate = () => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const start = new Date(today);
-  start.setDate(today.getDate() - 6);
-  return formatDateInput(start);
-};
-
-const getDefaultEndDate = () => formatDateInput(new Date());
-
 const ActivityLog = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rangeError, setRangeError] = useState(null);
-  const [startDate, setStartDate] = useState(getDefaultStartDate);
-  const [endDate, setEndDate] = useState(getDefaultEndDate);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [refreshToken, setRefreshToken] = useState(0);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const loadingRef = useRef(false);
+
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
+
+  const hasStart = Boolean(startDate);
+  const hasEnd = Boolean(endDate);
 
   const isRangeValid = useMemo(() => {
-    if (!startDate || !endDate) {
-      return false;
+    if (!hasStart || !hasEnd) {
+      return true;
     }
     const start = new Date(startDate);
     const end = new Date(endDate);
     return start <= end;
-  }, [startDate, endDate]);
+  }, [endDate, hasEnd, hasStart, startDate]);
 
   const totalLogs = logs.length;
   const uniqueUsers = useMemo(() => {
@@ -85,33 +99,34 @@ const ActivityLog = () => {
 
   const latestLog = logs[0] ?? null;
 
+  const derivedRange = useMemo(() => {
+    if (logs.length === 0) {
+      return { start: null, end: null };
+    }
+    return {
+      start: logs[logs.length - 1]?.logDate ?? null,
+      end: logs[0]?.logDate ?? null,
+    };
+  }, [logs]);
+
+  const displayRangeStart = formatDisplayDate(startDate || derivedRange.start);
+  const displayRangeEnd = formatDisplayDate(endDate || derivedRange.end);
+  const autoSelectedRange = logs.length > 0 && (!hasStart || !hasEnd);
+
   const loadLogs = useCallback(
     async (signal) => {
-      if (!isRangeValid) {
-        setLogs([]);
-        setLastUpdated(null);
-        return;
-      }
       const data = await fetchActivityLogs({
-        startDate,
-        endDate,
+        startDate: hasStart ? startDate : undefined,
+        endDate: hasEnd ? endDate : undefined,
         signal,
       });
       setLogs(data);
       setLastUpdated(new Date());
     },
-    [endDate, isRangeValid, startDate]
+    [endDate, hasEnd, hasStart, startDate]
   );
 
   useEffect(() => {
-    if (!startDate || !endDate) {
-      setRangeError("Please choose a start and end date.");
-      setLoading(false);
-      setLogs([]);
-      setLastUpdated(null);
-      return;
-    }
-
     if (!isRangeValid) {
       setRangeError("Start date must be on or before the end date.");
       setLoading(false);
@@ -141,6 +156,21 @@ const ActivityLog = () => {
     return () => controller.abort();
   }, [endDate, isRangeValid, loadLogs, refreshToken, startDate]);
 
+  useEffect(() => {
+    if (!isRangeValid) {
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(() => {
+      if (loadingRef.current) {
+        return;
+      }
+      setRefreshToken((value) => value + 1);
+    }, AUTO_REFRESH_INTERVAL_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, [isRangeValid]);
+
   const handleRefresh = () => {
     setRefreshToken((value) => value + 1);
   };
@@ -151,6 +181,11 @@ const ActivityLog = () => {
 
   const handleEndDateChange = (event) => {
     setEndDate(event.target.value);
+  };
+
+  const handleClearRange = () => {
+    setStartDate("");
+    setEndDate("");
   };
 
   return (
@@ -191,14 +226,27 @@ const ActivityLog = () => {
               onChange={handleEndDateChange}
             />
           </div>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleRefresh}
-            disabled={loading || !isRangeValid}
-          >
-            {loading ? "Loading" : "Refresh"}
-          </button>
+          <div className="d-flex flex-column align-items-stretch">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleRefresh}
+              disabled={loading || !isRangeValid}
+            >
+              {loading ? "Loading" : "Refresh"}
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-secondary mt-2"
+              onClick={handleClearRange}
+              disabled={loading || (!hasStart && !hasEnd)}
+            >
+              Show entire history
+            </button>
+            <span className="text-secondary small text-nowrap text-lg-end">
+              Auto-refreshes every {AUTO_REFRESH_INTERVAL_MS / 1000} seconds
+            </span>
+          </div>
         </div>
       </div>
 
@@ -214,7 +262,8 @@ const ActivityLog = () => {
               </div>
               <div className="fs-4 fw-semibold">{formatNumber(totalLogs)}</div>
               <div className="text-secondary small">
-                Between {startDate || "-"} and {endDate || "-"}
+                Between {displayRangeStart || "-"} and {displayRangeEnd || "-"}
+                {autoSelectedRange ? " (auto-selected)" : ""}
               </div>
             </div>
           </div>
@@ -256,7 +305,13 @@ const ActivityLog = () => {
                 Last update
               </div>
               <div className="fs-6 fw-semibold">
-                {lastUpdated ? lastUpdated.toLocaleTimeString() : "Not loaded"}
+                {lastUpdated
+                  ? lastUpdated.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })
+                  : "Not loaded"}
               </div>
               <div className="text-secondary small">
                 {lastUpdated ? lastUpdated.toLocaleDateString() : ""}

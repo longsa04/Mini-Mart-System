@@ -2,6 +2,7 @@ package net.cmspos.cmspos.service.implement;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -51,8 +52,18 @@ public class ActivityLogServiceImpl implements ActivityLogService {
         if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
             throw new BadRequestException("Start date cannot be after end date");
         }
-        LocalDate effectiveEnd = Optional.ofNullable(endDate).orElse(LocalDate.now());
+        Optional<ActivityLog> latestLog = Optional.empty();
+        if (endDate == null || startDate == null) {
+            latestLog = activityLogRepository.findTopByOrderByLogDateDesc();
+        }
+
+        LocalDate effectiveEnd = Optional.ofNullable(endDate)
+                .orElseGet(() -> latestLog.map(log -> log.getLogDate().toLocalDate()).orElse(LocalDate.now()));
         LocalDate effectiveStart = Optional.ofNullable(startDate).orElse(effectiveEnd.minusDays(7));
+
+        if (effectiveStart.isAfter(effectiveEnd)) {
+            return Collections.emptyList();
+        }
         LocalDateTime start = effectiveStart.atStartOfDay();
         LocalDateTime end = effectiveEnd.plusDays(1).atStartOfDay();
         return activityLogRepository.findByLogDateBetweenOrderByLogDateDesc(start, end).stream()
