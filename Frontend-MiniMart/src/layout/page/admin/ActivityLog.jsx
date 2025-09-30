@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fetchActivityLogs } from "../../../api/activityLogs";
+
+const AUTO_REFRESH_INTERVAL_MS = 10000;
 
 const formatDateInput = (date) => {
   if (!(date instanceof Date)) {
@@ -48,6 +50,11 @@ const ActivityLog = () => {
   const [endDate, setEndDate] = useState(getDefaultEndDate);
   const [refreshToken, setRefreshToken] = useState(0);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const loadingRef = useRef(false);
+
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
 
   const isRangeValid = useMemo(() => {
     if (!startDate || !endDate) {
@@ -141,6 +148,21 @@ const ActivityLog = () => {
     return () => controller.abort();
   }, [endDate, isRangeValid, loadLogs, refreshToken, startDate]);
 
+  useEffect(() => {
+    if (!isRangeValid) {
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(() => {
+      if (loadingRef.current) {
+        return;
+      }
+      setRefreshToken((value) => value + 1);
+    }, AUTO_REFRESH_INTERVAL_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, [isRangeValid]);
+
   const handleRefresh = () => {
     setRefreshToken((value) => value + 1);
   };
@@ -191,14 +213,19 @@ const ActivityLog = () => {
               onChange={handleEndDateChange}
             />
           </div>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleRefresh}
-            disabled={loading || !isRangeValid}
-          >
-            {loading ? "Loading" : "Refresh"}
-          </button>
+          <div className="d-flex flex-column align-items-stretch">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleRefresh}
+              disabled={loading || !isRangeValid}
+            >
+              {loading ? "Loading" : "Refresh"}
+            </button>
+            <span className="text-secondary small text-nowrap text-lg-end">
+              Auto-refreshes every {AUTO_REFRESH_INTERVAL_MS / 1000} seconds
+            </span>
+          </div>
         </div>
       </div>
 
@@ -256,7 +283,13 @@ const ActivityLog = () => {
                 Last update
               </div>
               <div className="fs-6 fw-semibold">
-                {lastUpdated ? lastUpdated.toLocaleTimeString() : "Not loaded"}
+                {lastUpdated
+                  ? lastUpdated.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })
+                  : "Not loaded"}
               </div>
               <div className="text-secondary small">
                 {lastUpdated ? lastUpdated.toLocaleDateString() : ""}
