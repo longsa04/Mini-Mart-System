@@ -1,0 +1,110 @@
+.app {
+  width: 100%;
+  height: 100vh;
+  display: block;
+  /* position: fixed; */
+}
+
+.app-menu {
+  width: 280px;
+  height: 100vh;
+  padding: 15px;
+  background: white;
+  position: relative;
+  display: block;
+}
+
+.app-header {
+  width: 100%;
+  height: 7vh;
+}
+
+.app-logo {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  width: 100%;
+  height: 70px;
+  overflow: hidden;
+}
+
+.app-page {
+  width: 100%;
+  height: 93vh;
+  background: rgb(244, 244, 244);
+  overflow: scroll;
+}
+
+.content {
+  width: 100%;
+  height: 100vh;
+}
+
+.user-img {
+  height: 100%;
+}
+
+.app-defualt-user {
+  height: 50px;
+}
+
+/* class for use  */
+.bg-white {
+  background-color: white;
+}
+
+.bg-none {
+  background: none;
+}
+
+.between {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.start {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.end {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.font-12 {
+  font-size: 12px;
+}
+
+.box-shadow {
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.bg-green {
+  background: linear-gradient(60deg, #66bb6a, #43a047);
+}
+
+.bg-cyan {
+  background: linear-gradient(60deg, #26c6da, #00acc1);
+}
+
+.bg-yellow {
+  background: linear-gradient(60deg, #ffa726, #fb8c00);
+}
+
+.bg-red {
+  background: linear-gradient(60deg, #ef5350, #e53935);
+}

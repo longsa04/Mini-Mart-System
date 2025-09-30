@@ -1,0 +1,15 @@
+.form-content {
+    width: 500px;
+    max-width: 600px;
+    display: block;
+    padding: 16px;
+    font-size: 16px;
+}
+
+.input-box {
+    border: none;
+    background: none;
+    border-bottom: 1px solid silver;
+    border-radius: 5px;
+    padding: 5px 10px;
+}

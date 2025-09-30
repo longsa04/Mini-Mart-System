@@ -1,0 +1,148 @@
+.menu-compact {
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.menu-compact .app-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    border-radius: 8px;
+    padding: 8px 10px;
+    transition: background 0.2s ease;
+}
+
+.menu-compact .app-logo:hover {
+    background: rgba(79, 70, 229, 0.08);
+}
+
+.menu-compact .app-logo img {
+    max-height: 38px;
+}
+
+.menu-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.menu-section-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #8a94a6;
+    padding: 10px 12px 4px;
+}
+
+.menu-item {
+    width: 100%;
+    border: none;
+    background: none;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: #546071;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    text-align: left;
+}
+
+.menu-item:hover {
+    background: rgba(79, 70, 229, 0.08);
+    color: #1f2933;
+}
+
+.menu-item.active {
+    background: rgba(79, 70, 229, 0.15);
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+.menu-item .menu-icon {
+    font-size: 16px;
+    width: 22px;
+    display: inline-flex;
+    justify-content: center;
+}
+
+.menu-item.active .menu-icon {
+    color: #1d4ed8;
+}
+
+.menu-item .menu-label {
+    flex: 1;
+}
+
+.menu-item .menu-badge {
+    min-width: 24px;
+    padding: 2px 6px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #0f172a;
+    background: rgba(37, 99, 235, 0.18);
+    border-radius: 999px;
+    text-align: center;
+}
+
+.menu-item.active .menu-badge {
+    background: rgba(37, 99, 235, 0.28);
+    color: #1d4ed8;
+}
+
+.menu-section-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    padding: 10px 12px 6px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #8a94a6;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.menu-section-toggle:hover {
+    background: rgba(79, 70, 229, 0.06);
+    color: #546071;
+}
+
+.menu-section-toggle.open {
+    color: #1f2937;
+}
+
+.menu-section-title-text {
+    font-weight: 600;
+}
+
+.menu-toggle-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.menu-sublist {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 4px;
+    margin-top: 4px;
+}
+
+.menu-sublist.collapsed {
+    display: none;
+}
+

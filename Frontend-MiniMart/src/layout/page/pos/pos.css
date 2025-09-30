@@ -1,0 +1,423 @@
+.pos-layout {
+  min-height: 80vh;
+}
+
+.sku-input-group {
+  width: 100%;
+  max-width: 420px;
+  align-self: flex-start;
+}
+
+@media (min-width: 768px) {
+  .sku-input-group {
+    max-width: 460px;
+  }
+}
+
+.sku-input {
+  font-family: "Fira Code", "SFMono-Regular", Consolas, "Liberation Mono",
+    monospace;
+  letter-spacing: 0.05em;
+  font-size: 1.05rem;
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+}
+
+.sku-input::placeholder {
+  letter-spacing: 0.04em;
+}
+
+.sku-input-group .input-group-text {
+  padding-left: 0.85rem;
+  padding-right: 0.85rem;
+  font-size: 1.1rem;
+}
+.pos-scan-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.pos-search-results {
+  width: 100%;
+  max-width: 460px;
+  margin-top: 0.5rem;
+  background: #fff;
+  border: 1px solid #e3e6eb;
+  border-radius: 14px;
+  padding: 0.75rem 0.85rem;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+@media (max-width: 767.98px) {
+  .pos-search-results {
+    max-width: 100%;
+  }
+}
+
+.pos-search-results__header {
+  letter-spacing: 0.08em;
+}
+
+.pos-search-results__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0.45rem 0.35rem;
+  border-radius: 10px;
+  text-align: left;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.pos-search-results__item:hover,
+.pos-search-results__item:focus {
+  background: #f5f7fb;
+  transform: translateY(-1px);
+}
+
+.pos-search-results__item-info .text-secondary {
+  font-size: 0.78rem;
+}
+
+.pos-search-results__item-price {
+  font-weight: 600;
+  color: #151e33;
+}
+
+.pos-search-results__empty {
+  padding: 0.35rem 0.25rem;
+}
+.pos-scan {
+  align-items: flex-start;
+}
+
+.pos-scan .pos-tabs {
+  width: 100%;
+  justify-content: flex-start;
+}
+.pos-scan .pos-tab.active {
+  background: #2a66dc;
+  color: #fff;
+  border-color: #2a66dc;
+}
+
+.pos-summary {
+  width: 320px;
+}
+
+.pos-summary .btn-lg {
+  padding: 0.85rem 1rem;
+}
+
+.pos-summary .btn {
+  border-radius: 8px;
+}
+
+.pos-quick-grid {
+  --bs-gutter-x: 1.5rem;
+  --bs-gutter-y: 1.25rem;
+}
+
+.pos-quick-btn {
+  border: 1px solid #e3e6eb;
+  border-radius: 12px;
+  padding: 18px 20px;
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: left;
+}
+
+.pos-quick-btn:hover {
+  background: #f5f7fb;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+}
+
+.pos-quick-btn .text-secondary {
+  font-size: 0.85rem;
+}
+
+.pos-quick-btn .fw-bold {
+  font-size: 1rem;
+}
+
+.pos-action-bar {
+  background: #f8f9fa;
+  border-top: 1px solid #e3e6eb;
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+}
+
+input:focus {
+  outline-width: 0;
+}
+
+.fadeIn {
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0, 7s;
+  animation-duration: 0.7s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.bg-sliver {
+  background-color: aliceblue;
+}
+
+.bg-orange {
+  background: rgb(248, 118, 26);
+  color: rgb(225, 225, 225);
+}
+
+.color-orange {
+  background: rgb(248, 118, 26);
+}
+
+.btn-orange {
+  background: rgb(248, 118, 26);
+  color: rgb(255, 255, 255);
+  transition-duration: 0.2s;
+}
+
+.btn-orange:hover {
+  background: rgb(211, 96, 15);
+  color: white;
+}
+
+.bg-none {
+  background: none;
+}
+
+.pos-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  padding-bottom: 4px;
+  padding-right: 4px;
+  overflow-x: auto;
+  justify-content: flex-start;
+}
+
+.pos-tabs::-webkit-scrollbar {
+  height: 5px;
+}
+
+.pos-tabs::-webkit-scrollbar-thumb {
+  background: rgba(42, 102, 220, 0.3);
+  border-radius: 999px;
+}
+
+.pos-tabs::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.32);
+}
+
+.pos-tab {
+  border: 1px solid #d4ddf3;
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  background: #f3f6ff;
+  color: #3b4256;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.pos-tab:hover {
+  transform: translateY(-1px);
+  border-color: #bac6ec;
+  background: #e7edff;
+}
+
+.print-preview-container {
+  max-width: 360px;
+  margin: 0 auto;
+  padding: 10px;
+  background: linear-gradient(145deg, #f3f5fb 0%, #e7ebf7 100%);
+  border-radius: 12px;
+}
+
+.print-preview-toolbar {
+  margin-bottom: 12px;
+}
+
+.print-preview-stage {
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  background: rgba(15, 23, 42, 0.05);
+  border-radius: 14px;
+}
+
+.print-preview-paper {
+  padding: 10px;
+  background: #fefefe;
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.preview-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.invoice-table {
+  border-collapse: collapse;
+  font-size: inherit;
+}
+
+.invoice-table thead th {
+  padding: 6px 0;
+  font-weight: 600;
+  color: #151e33;
+  border-bottom: 2px solid rgba(21, 30, 51, 0.12);
+}
+
+.invoice-table tbody td {
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(21, 30, 51, 0.08);
+}
+
+.invoice-divider {
+  height: 12px;
+  margin: 12px 0 18px;
+  background-image: linear-gradient(
+    90deg,
+    rgba(21, 30, 51, 0.08) 33%,
+    rgba(255, 255, 255, 0) 0%
+  );
+  background-position: bottom;
+  background-size: 12px 2px;
+  background-repeat: repeat-x;
+}
+
+.invoice-divider--light {
+  opacity: 0.5;
+  margin: 16px 0;
+}
+
+.invoice-divider--perforated {
+  background-image: radial-gradient(
+    circle,
+    rgba(21, 30, 51, 0.12) 20%,
+    rgba(255, 255, 255, 0) 21%
+  );
+  background-size: 8px 8px;
+  height: 10px;
+  margin-top: 22px;
+}
+
+.invoice-total {
+  padding: 10px 0;
+  margin-top: 4px;
+  border-top: 1px solid rgba(21, 30, 51, 0.12);
+  border-bottom: 1px solid rgba(21, 30, 51, 0.12);
+}
+
+.invoice-barcode {
+  letter-spacing: 2px;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(21, 30, 51, 0.75);
+}
+
+.invoice-pdf {
+  width: 148mm !important;
+  min-height: 210mm !important;
+  padding: 16mm !important;
+  font-size: 11px !important;
+  line-height: 1.6 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(21, 30, 51, 0.12) !important;
+}
+
+.invoice-pdf .preview-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.invoice-pdf .invoice-table thead th,
+.invoice-pdf .invoice-table tbody td {
+  padding: 8px 0;
+  font-size: 12px;
+}
+
+.invoice-pdf .invoice-total {
+  padding: 12px 0;
+}
+
+.invoice-pdf .invoice-barcode {
+  font-size: 16px;
+}
+
+.pos-receipt-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pos-receipt-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.pos-receipt-dialog {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 500px;
+  padding: 8px;
+}
