@@ -2,12 +2,16 @@ package net.cmspos.cmspos.controller;
 
 import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
+import net.cmspos.cmspos.model.dto.ActivityLogDto;
 import net.cmspos.cmspos.model.dto.UserResponseDto;
 import net.cmspos.cmspos.model.dto.auth.AuthResponseDto;
 import net.cmspos.cmspos.model.dto.auth.LoginRequestDto;
 import net.cmspos.cmspos.model.entity.User;
 import net.cmspos.cmspos.security.JwtService;
 import net.cmspos.cmspos.security.UserPrincipal;
+import net.cmspos.cmspos.service.ActivityLogService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,8 +29,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);
+
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final ActivityLogService activityLogService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto request) {
@@ -47,8 +54,24 @@ public class AuthController {
         long expiresIn = jwtService.getExpirationMillis();
 
         UserResponseDto responseUser = toResponse(user);
+        recordLoginActivity(user);
         AuthResponseDto responseDto = new AuthResponseDto(token, expiresIn, responseUser);
         return ResponseEntity.ok(responseDto);
+    }
+
+    private void recordLoginActivity(User user) {
+        if (user == null) {
+            return;
+        }
+        try {
+            ActivityLogDto logRequest = new ActivityLogDto();
+            logRequest.setUserId(user.getUserId());
+            String role = user.getRole() != null ? user.getRole().name() : "Unknown role";
+            logRequest.setAction(String.format("%s (%s) logged in", user.getUsername(), role));
+            activityLogService.log(logRequest);
+        } catch (RuntimeException ex) {
+            LOG.warn("Unable to record login activity for user {}", user.getUsername(), ex);
+        }
     }
 
     private UserResponseDto toResponse(User user) {
