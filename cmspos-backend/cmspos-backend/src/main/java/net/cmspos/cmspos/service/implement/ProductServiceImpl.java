@@ -61,6 +61,9 @@ public class ProductServiceImpl implements ProductService {
     private void applyDto(Product product, ProductDto dto) {
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
+        Double dtoCostPrice = dto.getCostPrice();
+        double costPrice = dtoCostPrice == null ? 0.0 : Math.max(dtoCostPrice, 0.0);
+        product.setCostPrice(costPrice);
         product.setSku(dto.getSku());
         product.setCategory(resolveCategory(dto.getCategoryId()).orElse(null));
     }

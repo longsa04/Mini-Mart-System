@@ -18,6 +18,7 @@ const emptyForm = {
   name: "",
   sku: "",
   price: "",
+  costPrice: "",
   categoryId: "",
 };
 
@@ -99,6 +100,15 @@ const Products = () => {
       return "Price must be a positive number.";
     }
 
+    const costNumber = Number(formValues.costPrice);
+    if (Number.isNaN(costNumber) || costNumber < 0) {
+      return "Cost price must be zero or greater.";
+    }
+
+    if (costNumber > priceNumber) {
+      return "Cost price cannot exceed the selling price.";
+    }
+
     if (!formValues.categoryId) {
       return "Please choose a category.";
     }
@@ -126,6 +136,10 @@ const Products = () => {
       name: formValues.name.trim(),
       sku: formValues.sku.trim(),
       price: Number(formValues.price),
+      costPrice:
+        formValues.costPrice === ""
+          ? 0
+          : Number(formValues.costPrice),
       categoryId: Number(formValues.categoryId),
     };
 
@@ -154,6 +168,8 @@ const Products = () => {
       name: product.name ?? "",
       sku: product.sku ?? "",
       price: product.price != null ? String(product.price) : "",
+      costPrice:
+        product.costPrice != null ? String(product.costPrice) : "",
       categoryId: product.category?.id ?? product.category?.categoryId
         ? String(product.category.id ?? product.category.categoryId)
         : "",
@@ -227,6 +243,11 @@ const Products = () => {
         <td>{product.name ?? "Unnamed"}</td>
         <td>{product.sku ?? "-"}</td>
         <td>{product.category?.name ?? "Unassigned"}</td>
+        <td>
+          {product.costPrice != null
+            ? priceFormatter.format(product.costPrice)
+            : "-"}
+        </td>
         <td>{
           product.price != null
             ? priceFormatter.format(product.price)
@@ -323,6 +344,20 @@ const Products = () => {
               />
             </div>
             <div className="col-md-2">
+              <label className="form-label">Cost Price (USD)</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                className="form-control"
+                name="costPrice"
+                value={formValues.costPrice}
+                onChange={handleInputChange}
+                disabled={submitting}
+                required
+              />
+            </div>
+            <div className="col-md-2">
               <label className="form-label">Price (USD)</label>
               <input
                 type="number"
@@ -386,6 +421,7 @@ const Products = () => {
                 <th>Product</th>
                 <th>SKU</th>
                 <th>Category</th>
+                <th>Cost Price</th>
                 <th>Price</th>
                 <th style={{ width: "160px" }}>Actions</th>
               </tr>

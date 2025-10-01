@@ -244,14 +244,15 @@ public class ReportServiceImpl implements ReportService {
             double unitPrice = Optional.ofNullable(detail.getPrice()).orElse(0.0);
             accumulator.quantity += quantity;
             accumulator.revenue += unitPrice * quantity;
+            double unitCostPrice = Optional.ofNullable(detail.getProduct().getCostPrice()).orElse(0.0);
+            if (unitCostPrice > 0.0 || accumulator.costPrice == 0.0) {
+                accumulator.costPrice = unitCostPrice;
+            }
         }
 
         Map<Long, CostAccumulator> costByProduct = new HashMap<>();
-        List<PurchaseOrder> purchaseOrders = purchaseOrderRepository.findAll();
+        List<PurchaseOrder> purchaseOrders = purchaseOrderRepository.findByOrderDateLessThanEqual(rangeEnd);
         for (PurchaseOrder purchaseOrder : purchaseOrders) {
-            if (purchaseOrder.getOrderDate() != null && purchaseOrder.getOrderDate().isAfter(rangeEnd)) {
-                continue;
-            }
             if (locationId != null) {
                 if (purchaseOrder.getLocation() == null
                         || !locationId.equals(purchaseOrder.getLocation().getLocationId())) {
@@ -278,7 +279,9 @@ public class ReportServiceImpl implements ReportService {
             Long productId = entry.getKey();
             SalesAccumulator sales = entry.getValue();
             CostAccumulator cost = costByProduct.get(productId);
-            double averageCost = (cost == null || cost.quantity == 0) ? 0.0 : cost.totalCost / cost.quantity;
+            double averageCost = (cost == null || cost.quantity == 0)
+                    ? sales.costPrice
+                    : cost.totalCost / cost.quantity;
             double productCost = averageCost * sales.quantity;
             double grossProfit = sales.revenue - productCost;
             costOfGoodsSoldValue += productCost;
@@ -373,6 +376,7 @@ public class ReportServiceImpl implements ReportService {
         private final String productName;
         private long quantity;
         private double revenue;
+        private double costPrice;
 
         private SalesAccumulator(String productName) {
             this.productName = productName;
