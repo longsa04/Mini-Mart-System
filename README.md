@@ -36,9 +36,9 @@ The Mini Mart System integrates:
 
 ## Project Structure  
 
-  cmspos-backend/ # Spring Boot API and Maven wrapper
-  Frontend-MiniMart/ # React/Vite single-page application
-  Database/pos.sql # MySQL schema and sample data
+- `cmspos-backend/` — Spring Boot API and Maven wrapper  
+- `Frontend-MiniMart/` — React/Vite single-page application  
+- `Database/pos.sql` — MySQL schema and sample data  
 
 
 ---
@@ -92,6 +92,7 @@ The Mini Mart System integrates:
 
 ## License  
 
-This project is released under the **MIT License**.  
-You are free to use, modify, and distribute it for educational or commercial purposes.  
+This project is licensed under the **MIT License**.  
+You are permitted to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, subject to the terms of the license.  
 
+For full details, please refer to the [LICENSE](./LICENSE) file included in this repository.  
