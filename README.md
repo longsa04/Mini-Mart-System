@@ -26,6 +26,15 @@ The Mini Mart System integrates:
 - **POS Checkout**  
   Fast checkout flow with barcode scanning, keyword search, cart editing, cash handling with change calculation, order submission, and printable receipts tagged with cashier and branch.  
 
+- **Profit & Loss Reporting**  
+  Provides business owners with clear financial insights by comparing sales revenue, cost of goods sold (COGS), and operating expenses.  
+  - **Revenue Tracking**: Calculates gross sales from completed POS transactions.  
+  - **Cost of Goods Sold (COGS)**: Matches product sales against purchase costs to determine true profit margins.  
+  - **Expense Integration**: Pulls from recorded operating expenses (e.g., rent, utilities, salaries) for accurate reporting.  
+  - **Net Profit/Loss**: Displays overall profitability for daily, monthly, or custom date ranges.  
+  - **Visual Analytics**: Line charts for profit trends, pie charts for expense breakdown, and tables for top-performing products.  
+  - **Role-Based Access**: Restricted to managers and admins for business decision-making.  
+
 - **Audit Trail**  
   Records login events and operations, auto-refreshes every 10 seconds, and provides metadata (user, role, timestamp) in an admin-friendly activity log.  
 
@@ -96,5 +105,6 @@ This project is licensed under the **MIT License**.
 You are permitted to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, subject to the terms of the license.  
 
 For full details, please refer to the [LICENSE](./LICENSE) file included in this repository.  
+
 
 
