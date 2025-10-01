@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import net.cmspos.cmspos.model.dto.report.DailySalesSummaryDto;
 import net.cmspos.cmspos.model.dto.report.InventoryReportDto;
+import net.cmspos.cmspos.model.dto.report.ProfitLossReportDto;
 import net.cmspos.cmspos.model.dto.report.TopProductSalesDto;
 import net.cmspos.cmspos.service.ReportService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -49,6 +50,17 @@ public class ReportController {
     @GetMapping("/inventory")
     public ResponseEntity<InventoryReportDto> getInventoryReport() {
         InventoryReportDto report = reportService.getInventoryReport();
+        return ResponseEntity.ok(report);
+    }
+
+    @GetMapping("/profit-loss")
+    public ResponseEntity<ProfitLossReportDto> getProfitAndLoss(
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) Long locationId) {
+        ProfitLossReportDto report = reportService.getProfitAndLoss(startDate, endDate, locationId);
         return ResponseEntity.ok(report);
     }
 }
