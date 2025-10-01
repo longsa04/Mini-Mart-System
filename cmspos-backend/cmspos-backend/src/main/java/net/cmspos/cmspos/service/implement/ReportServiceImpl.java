@@ -17,16 +17,25 @@ import net.cmspos.cmspos.exception.BadRequestException;
 import net.cmspos.cmspos.model.dto.report.DailySalesSummaryDto;
 import net.cmspos.cmspos.model.dto.report.InventoryItemDto;
 import net.cmspos.cmspos.model.dto.report.InventoryReportDto;
+import net.cmspos.cmspos.model.dto.report.ExpenseSummaryDto;
+import net.cmspos.cmspos.model.dto.report.ProfitLossProductDto;
+import net.cmspos.cmspos.model.dto.report.ProfitLossReportDto;
 import net.cmspos.cmspos.model.dto.report.TopProductSalesDto;
+import net.cmspos.cmspos.model.entity.Expense;
 import net.cmspos.cmspos.model.entity.Product;
 import net.cmspos.cmspos.model.entity.inventory.Stock;
 import net.cmspos.cmspos.model.entity.order.Order;
 import net.cmspos.cmspos.model.entity.order.OrderDetail;
+import net.cmspos.cmspos.model.entity.purchase.PurchaseOrder;
+import net.cmspos.cmspos.model.entity.purchase.PurchaseOrderDetail;
+import net.cmspos.cmspos.model.enums.ExpenseCategory;
 import net.cmspos.cmspos.model.enums.PaymentStatus;
+import net.cmspos.cmspos.repository.ExpenseRepository;
 import net.cmspos.cmspos.repository.ProductRepository;
 import net.cmspos.cmspos.repository.inventory.StockRepository;
 import net.cmspos.cmspos.repository.order.OrderDetailRepository;
 import net.cmspos.cmspos.repository.order.OrderRepository;
+import net.cmspos.cmspos.repository.purchase.PurchaseOrderRepository;
 import net.cmspos.cmspos.service.ReportService;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +49,8 @@ public class ReportServiceImpl implements ReportService {
     private final OrderDetailRepository orderDetailRepository;
     private final ProductRepository productRepository;
     private final StockRepository stockRepository;
+    private final ExpenseRepository expenseRepository;
+    private final PurchaseOrderRepository purchaseOrderRepository;
 
     @Override
     public List<DailySalesSummaryDto> getDailySalesSummary(LocalDate startDate, LocalDate endDate, Long locationId) {
@@ -187,6 +198,149 @@ public class ReportServiceImpl implements ReportService {
                 .build();
     }
 
+    @Override
+    public ProfitLossReportDto getProfitAndLoss(LocalDate startDate, LocalDate endDate, Long locationId) {
+        LocalDate effectiveEnd = Optional.ofNullable(endDate).orElse(LocalDate.now());
+        LocalDate effectiveStart = Optional.ofNullable(startDate).orElse(effectiveEnd.minusMonths(1));
+
+        if (effectiveEnd.isBefore(effectiveStart)) {
+            throw new BadRequestException("End date cannot be before start date");
+        }
+
+        LocalDateTime rangeStart = effectiveStart.atStartOfDay();
+        LocalDateTime rangeEnd = effectiveEnd.plusDays(1).atStartOfDay();
+
+        List<Order> paidOrders = locationId == null
+                ? orderRepository.findByPaymentStatusAndOrderDateBetween(PaymentStatus.PAID, rangeStart, rangeEnd)
+                : orderRepository.findByPaymentStatusAndLocation_LocationIdAndOrderDateBetween(
+                        PaymentStatus.PAID, locationId, rangeStart, rangeEnd);
+
+        double totalRevenue = paidOrders.stream()
+                .mapToDouble(order -> Optional.ofNullable(order.getTotal()).orElse(0.0))
+                .sum();
+
+        double totalDiscounts = paidOrders.stream()
+                .mapToDouble(order -> Optional.ofNullable(order.getDiscount()).orElse(0.0))
+                .sum();
+
+        List<OrderDetail> orderDetails = locationId == null
+                ? orderDetailRepository.findByOrder_PaymentStatusAndOrder_OrderDateBetween(
+                        PaymentStatus.PAID, rangeStart, rangeEnd)
+                : orderDetailRepository.findByOrder_PaymentStatusAndOrder_Location_LocationIdAndOrder_OrderDateBetween(
+                        PaymentStatus.PAID, locationId, rangeStart, rangeEnd);
+
+        Map<Long, SalesAccumulator> salesByProduct = new HashMap<>();
+        for (OrderDetail detail : orderDetails) {
+            if (detail.getProduct() == null) {
+                continue;
+            }
+            Long productId = detail.getProduct().getProductId();
+            if (productId == null) {
+                continue;
+            }
+            SalesAccumulator accumulator = salesByProduct.computeIfAbsent(
+                    productId, id -> new SalesAccumulator(detail.getProduct().getName()));
+            int quantity = Optional.ofNullable(detail.getQuantity()).orElse(0);
+            double unitPrice = Optional.ofNullable(detail.getPrice()).orElse(0.0);
+            accumulator.quantity += quantity;
+            accumulator.revenue += unitPrice * quantity;
+        }
+
+        Map<Long, CostAccumulator> costByProduct = new HashMap<>();
+        List<PurchaseOrder> purchaseOrders = purchaseOrderRepository.findAll();
+        for (PurchaseOrder purchaseOrder : purchaseOrders) {
+            if (purchaseOrder.getOrderDate() != null && purchaseOrder.getOrderDate().isAfter(rangeEnd)) {
+                continue;
+            }
+            if (locationId != null) {
+                if (purchaseOrder.getLocation() == null
+                        || !locationId.equals(purchaseOrder.getLocation().getLocationId())) {
+                    continue;
+                }
+            }
+            List<PurchaseOrderDetail> details = Optional.ofNullable(purchaseOrder.getDetails()).orElse(List.of());
+            for (PurchaseOrderDetail detail : details) {
+                if (detail.getProduct() == null || detail.getProduct().getProductId() == null) {
+                    continue;
+                }
+                CostAccumulator accumulator = costByProduct.computeIfAbsent(
+                        detail.getProduct().getProductId(), id -> new CostAccumulator());
+                int quantity = Optional.ofNullable(detail.getQuantity()).orElse(0);
+                double cost = Optional.ofNullable(detail.getPrice()).orElse(0.0);
+                accumulator.quantity += quantity;
+                accumulator.totalCost += cost * quantity;
+            }
+        }
+
+        double costOfGoodsSoldValue = 0.0;
+        List<ProfitLossProductDto> productBreakdown = new ArrayList<>();
+        for (Map.Entry<Long, SalesAccumulator> entry : salesByProduct.entrySet()) {
+            Long productId = entry.getKey();
+            SalesAccumulator sales = entry.getValue();
+            CostAccumulator cost = costByProduct.get(productId);
+            double averageCost = (cost == null || cost.quantity == 0) ? 0.0 : cost.totalCost / cost.quantity;
+            double productCost = averageCost * sales.quantity;
+            double grossProfit = sales.revenue - productCost;
+            costOfGoodsSoldValue += productCost;
+            productBreakdown.add(ProfitLossProductDto.builder()
+                    .productId(productId)
+                    .productName(sales.productName)
+                    .quantitySold(sales.quantity)
+                    .revenue(round(sales.revenue))
+                    .costOfGoods(round(productCost))
+                    .grossProfit(round(grossProfit))
+                    .build());
+        }
+
+        productBreakdown.sort(Comparator
+                .comparingDouble(ProfitLossProductDto::getRevenue).reversed()
+                .thenComparing(ProfitLossProductDto::getProductName));
+
+        List<Expense> expenses = expenseRepository.findByExpenseDateBetween(rangeStart, rangeEnd);
+        Map<ExpenseCategory, Double> expenseTotals = new HashMap<>();
+        for (Expense expense : expenses) {
+            if (locationId != null) {
+                if (expense.getLocation() == null
+                        || !locationId.equals(expense.getLocation().getLocationId())) {
+                    continue;
+                }
+            }
+            ExpenseCategory category = Optional.ofNullable(expense.getCategory()).orElse(ExpenseCategory.OTHER);
+            double amount = Optional.ofNullable(expense.getAmount()).orElse(0.0);
+            expenseTotals.merge(category, amount, Double::sum);
+        }
+
+        double totalExpensesValue = expenseTotals.values().stream()
+                .mapToDouble(Double::doubleValue)
+                .sum();
+
+        List<ExpenseSummaryDto> expenseBreakdown = expenseTotals.entrySet().stream()
+                .map(entry -> ExpenseSummaryDto.builder()
+                        .category(entry.getKey())
+                        .totalAmount(round(entry.getValue()))
+                        .build())
+                .sorted(Comparator
+                        .comparingDouble(ExpenseSummaryDto::getTotalAmount).reversed()
+                        .thenComparing(expenseSummaryDto -> expenseSummaryDto.getCategory().name()))
+                .toList();
+
+        double grossProfit = totalRevenue - costOfGoodsSoldValue;
+        double netProfit = grossProfit - totalExpensesValue;
+
+        return ProfitLossReportDto.builder()
+                .startDate(effectiveStart)
+                .endDate(effectiveEnd)
+                .totalRevenue(round(totalRevenue))
+                .totalDiscounts(round(totalDiscounts))
+                .costOfGoodsSold(round(costOfGoodsSoldValue))
+                .grossProfit(round(grossProfit))
+                .totalExpenses(round(totalExpensesValue))
+                .netProfit(round(netProfit))
+                .productBreakdown(productBreakdown)
+                .expenseBreakdown(expenseBreakdown)
+                .build();
+    }
+
     private double round(double value) {
         return BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
@@ -213,5 +367,20 @@ public class ReportServiceImpl implements ReportService {
         private InventoryAccumulator(Product product) {
             this.product = product;
         }
+    }
+
+    private static class SalesAccumulator {
+        private final String productName;
+        private long quantity;
+        private double revenue;
+
+        private SalesAccumulator(String productName) {
+            this.productName = productName;
+        }
+    }
+
+    private static class CostAccumulator {
+        private long quantity;
+        private double totalCost;
     }
 }
