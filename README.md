@@ -73,7 +73,7 @@ The Mini Mart System integrates:
     npm install
     npm run dev
 
-### 4. Database Setup  
+4. Database Setup  
 
 - Import `Database/pos.sql` into MySQL  
 - Ensure schema and seed data are loaded  
@@ -96,3 +96,4 @@ This project is licensed under the **MIT License**.
 You are permitted to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, subject to the terms of the license.  
 
 For full details, please refer to the [LICENSE](./LICENSE) file included in this repository.  
+
