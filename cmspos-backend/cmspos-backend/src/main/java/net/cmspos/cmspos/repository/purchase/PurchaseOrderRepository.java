@@ -14,5 +14,8 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
     List<PurchaseOrder> findByOrderDateBetween(LocalDateTime start, LocalDateTime end);
 
     @EntityGraph(attributePaths = {"supplier", "location", "details", "details.product"})
+    List<PurchaseOrder> findByOrderDateLessThanEqual(LocalDateTime end);
+
+    @EntityGraph(attributePaths = {"supplier", "location", "details", "details.product"})
     Optional<PurchaseOrder> findByPurchaseOrderId(Long purchaseOrderId);
 }

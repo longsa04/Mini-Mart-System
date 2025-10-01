@@ -322,6 +322,7 @@ CREATE TABLE IF NOT EXISTS `product` (
   `product_id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(150) NOT NULL,
   `price` double NOT NULL,
+  `cost_price` double NOT NULL DEFAULT '0',
   `sku` varchar(50) DEFAULT NULL,
   `category_id` bigint DEFAULT NULL,
   PRIMARY KEY (`product_id`),
@@ -333,24 +334,24 @@ CREATE TABLE IF NOT EXISTS `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`product_id`, `name`, `price`, `sku`, `category_id`) VALUES
-(1, 'Coca Cola', 1.5, 'SKU-COKE-001', 1),
-(2, 'Pepsi', 1.4, 'SKU-PEPSI-002', 1),
-(3, 'Potato Chips', 2, 'SKU-CHIP-003', 2),
-(4, 'Laundry Powder', 5, 'SKU-LAUN-004', 3),
-(5, 'Shampoo', 4.5, 'SKU-SHAM-005', 4),
-(6, 'Frozen Pepperoni Pizza', 7.99, 'SKU-FPIZ-006', 5),
-(7, 'Mixed Vegetables (Frozen)', 3.49, 'SKU-MVEG-007', 5),
-(8, 'Whole Wheat Bread', 2.59, 'SKU-WBREAD-008', 6),
-(9, 'Chocolate Croissant', 1.99, 'SKU-CCROIS-009', 6),
-(10, 'Whole Milk 1L', 1.79, 'SKU-WMILK-010', 7),
-(11, 'Cheddar Cheese Block', 4.25, 'SKU-CHED-011', 7),
-(12, 'Fresh Lettuce', 1.35, 'SKU-FLETT-012', 8),
-(13, 'Bananas (1kg)', 2.1, 'SKU-BAN-013', 8),
-(14, 'Vitamin C Tablets', 8.95, 'SKU-VITC-014', 9),
-(15, 'Pain Relief Gel', 5.49, 'SKU-PRGEL-015', 9),
-(16, 'Wireless Mouse', 14.99, 'SKU-WMOU-016', 10),
-(17, 'USB-C Charging Cable', 6.5, 'SKU-USBC-017', 10);
+INSERT INTO `product` (`product_id`, `name`, `price`, `cost_price`, `sku`, `category_id`) VALUES
+(1, 'Coca Cola', 1.5, 0.95, 'SKU-COKE-001', 1),
+(2, 'Pepsi', 1.4, 0.9, 'SKU-PEPSI-002', 1),
+(3, 'Potato Chips', 2, 1.25, 'SKU-CHIP-003', 2),
+(4, 'Laundry Powder', 5, 3.2, 'SKU-LAUN-004', 3),
+(5, 'Shampoo', 4.5, 2.75, 'SKU-SHAM-005', 4),
+(6, 'Frozen Pepperoni Pizza', 7.99, 5.1, 'SKU-FPIZ-006', 5),
+(7, 'Mixed Vegetables (Frozen)', 3.49, 2.15, 'SKU-MVEG-007', 5),
+(8, 'Whole Wheat Bread', 2.59, 1.35, 'SKU-WBREAD-008', 6),
+(9, 'Chocolate Croissant', 1.99, 1.1, 'SKU-CCROIS-009', 6),
+(10, 'Whole Milk 1L', 1.79, 1.05, 'SKU-WMILK-010', 7),
+(11, 'Cheddar Cheese Block', 4.25, 2.85, 'SKU-CHED-011', 7),
+(12, 'Fresh Lettuce', 1.35, 0.75, 'SKU-FLETT-012', 8),
+(13, 'Bananas (1kg)', 2.1, 1.25, 'SKU-BAN-013', 8),
+(14, 'Vitamin C Tablets', 8.95, 5.4, 'SKU-VITC-014', 9),
+(15, 'Pain Relief Gel', 5.49, 3.3, 'SKU-PRGEL-015', 9),
+(16, 'Wireless Mouse', 14.99, 9.2, 'SKU-WMOU-016', 10),
+(17, 'USB-C Charging Cable', 6.5, 3.8, 'SKU-USBC-017', 10);
 
 -- --------------------------------------------------------
 

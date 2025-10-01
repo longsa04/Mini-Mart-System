@@ -29,6 +29,20 @@ public class Product {
     @Column(nullable = false)
     private Double price;
 
+    @Column(name = "cost_price", nullable = false)
+    private Double costPrice = 0.0;
+
     @Column(unique = true, length = 50)
     private String sku;
+
+    @PrePersist
+    @PreUpdate
+    private void ensureDefaults() {
+        if (price == null) {
+            price = 0.0;
+        }
+        if (costPrice == null) {
+            costPrice = 0.0;
+        }
+    }
 }
