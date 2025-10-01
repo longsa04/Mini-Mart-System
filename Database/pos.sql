@@ -139,7 +139,7 @@ DROP TABLE IF EXISTS `expense`;
 CREATE TABLE IF NOT EXISTS `expense` (
   `expense_id` bigint NOT NULL AUTO_INCREMENT,
   `amount` double NOT NULL,
-  `category` enum('OTHER','RENT','SALARY','SUPPLIES','UTILITIES') NOT NULL,
+  `category` enum('OTHER','RENT','SALARY','SUPPLIES','UTILITIES') NOT NULL DEFAULT 'OTHER',
   `description` varchar(255) NOT NULL,
   `expense_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `location_id` bigint NOT NULL,
@@ -154,8 +154,8 @@ CREATE TABLE IF NOT EXISTS `expense` (
 --
 
 INSERT INTO `expense` (`expense_id`, `amount`, `category`, `description`, `expense_date`, `location_id`, `user_id`) VALUES
-(1, 100, '', 'Electricity Bill', '2025-09-21 17:49:54', 1, 1),
-(2, 50, '', 'Cleaning Service', '2025-09-21 17:49:54', 1, 2);
+(1, 100, 'UTILITIES', 'Electricity Bill', '2025-09-21 17:49:54', 1, 1),
+(2, 50, 'SUPPLIES', 'Cleaning Service', '2025-09-21 17:49:54', 1, 2);
 
 -- --------------------------------------------------------
 
