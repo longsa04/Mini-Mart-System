@@ -85,7 +85,7 @@ The Mini Mart System integrates:
 | Role    | Username | Password |
 |---------|----------|----------|
 | Admin   | admin    | admin    |
-| Admin   | manager  | manager  |
+| Manager | manager  | manager  |
 | Cashier | cashier  | cashier  |
 
 ---
@@ -96,4 +96,5 @@ This project is licensed under the **MIT License**.
 You are permitted to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, subject to the terms of the license.  
 
 For full details, please refer to the [LICENSE](./LICENSE) file included in this repository.  
+
 
