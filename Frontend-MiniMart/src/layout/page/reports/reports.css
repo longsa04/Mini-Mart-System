@@ -1,3 +1,38 @@
+.reports-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.reports-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.reports-tab {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
+  background: transparent;
+  color: #475569;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+}
+
+.reports-tab:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.reports-tab.active {
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.24);
+}
+
 .sales-summary-page {
   display: flex;
   flex-direction: column;
@@ -29,6 +64,57 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
+}
+
+.profit-loss-report {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profit-loss-actions {
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.profit-loss-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.profit-loss-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 160px;
+}
+
+.profit-loss-field label {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.profit-loss-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.profit-loss-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(15, 23, 42, 0.06);
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
 }
 
 .summary-kpi-card {
@@ -72,6 +158,47 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.profit-loss-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.profit-loss-table table thead th {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.profit-loss-table table tbody td {
+  color: #1f2937;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.profit-loss-insights {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  color: #475569;
+  font-size: 0.92rem;
+}
+
+.profit-loss-insights li strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.profit-loss-empty {
+  text-align: center;
+  color: #64748b;
+  padding: 1.1rem 0;
+  font-size: 0.9rem;
 }
 
 .panel-header {
@@ -229,5 +356,19 @@
   .peak-hours-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .profit-loss-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .profit-loss-filters {
+    width: 100%;
+  }
+
+  .profit-loss-field {
+    flex: 1 1 140px;
+    min-width: 0;
   }
 }
