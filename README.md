@@ -36,9 +36,9 @@ The Mini Mart System integrates:
 
 ## Project Structure  
 
-cmspos-backend/ # Spring Boot API and Maven wrapper
-Frontend-MiniMart/ # React/Vite single-page application
-Database/pos.sql # MySQL schema and sample data
+  cmspos-backend/ # Spring Boot API and Maven wrapper
+  Frontend-MiniMart/ # React/Vite single-page application
+  Database/pos.sql # MySQL schema and sample data
 
 
 ---
@@ -57,7 +57,6 @@ Database/pos.sql # MySQL schema and sample data
     ```bash
      git clone https://github.com/yourusername/mini-mart-system.git
      cd mini-mart-system
-   
 
 2. **Backend Setup**  
 
@@ -65,8 +64,7 @@ Database/pos.sql # MySQL schema and sample data
     cd cmspos-backend
     ./mvnw spring-boot:run
 
-
-### Configure your # application.properties # with MySQL credentials before running.
+### Configure `application.properties` with your MySQL credentials before running.
 
 3. **Frontend Setup**
 
@@ -74,7 +72,6 @@ Database/pos.sql # MySQL schema and sample data
     cd Frontend-MiniMart
     npm install
     npm run dev
-
 
 ### 4. Database Setup  
 
@@ -97,3 +94,4 @@ Database/pos.sql # MySQL schema and sample data
 
 This project is released under the **MIT License**.  
 You are free to use, modify, and distribute it for educational or commercial purposes.  
+
